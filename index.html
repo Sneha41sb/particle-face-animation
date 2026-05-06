@@ -35,11 +35,11 @@ canvas.height = window.innerHeight;
 const particles = [];
 const img = new Image();
 
-// PUT YOUR IMAGE NAME HERE
-img.src = "gi.jpeg";
+
+img.src = "./gi.jpeg";
 
 img.onload = () => {
-
+    console.log("IMAGE LOADED");
     const off = document.createElement("canvas");
     const offCtx = off.getContext("2d");
 
