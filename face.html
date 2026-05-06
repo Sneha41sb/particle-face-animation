@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rotating Face Particle Effect</title>
+
+<style>
+    body{
+        margin:0;
+        background:black;
+        overflow:hidden;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
+    }
+
+    canvas{
+        width:100vw;
+        height:100vh;
+    }
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const particles = [];
+const img = new Image();
+
+// PUT YOUR IMAGE NAME HERE
+img.src = "mine.jpeg";
+
+img.onload = () => {
+
+    const off = document.createElement("canvas");
+    const offCtx = off.getContext("2d");
+
+    const size = 320;
+
+    off.width = size;
+    off.height = size;
+
+    offCtx.drawImage(img,0,0,size,size);
+
+    const data = offCtx.getImageData(0,0,size,size).data;
+
+    for(let y=0;y<size;y+=3){
+        for(let x=0;x<size;x+=3){
+
+            const index = (y * size + x) * 4;
+
+            const r = data[index];
+            const g = data[index+1];
+            const b = data[index+2];
+            const a = data[index+3];
+
+            if(a > 150){
+
+                particles.push({
+                    x:x-size/2,
+                    y:y-size/2,
+                    z:(Math.random()-0.5)*25,
+                    color:`rgb(${r},${g},${b})`
+                });
+            }
+        }
+    }
+
+    animate();
+};
+
+let angle = 0;
+
+function animate(){
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    angle += 0.009;
+
+    particles.forEach(p=>{
+
+        const rotX =
+            p.x * Math.cos(angle) -
+            p.z * Math.sin(angle);
+
+        const rotZ =
+            p.x * Math.sin(angle) +
+            p.z * Math.cos(angle);
+
+        const scale = 400 / (400 + rotZ);
+
+        const px = rotX * scale + canvas.width/2;
+        const py = p.y * scale + canvas.height/2;
+
+        ctx.fillStyle = p.color;
+
+        ctx.beginPath();
+        ctx.arc(px,py,1.5*scale,0,Math.PI*2);
+        ctx.fill();
+    });
+
+    requestAnimationFrame(animate);
+}
+</script>
+
+</body>
+</html>
